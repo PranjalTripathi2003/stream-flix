@@ -8,6 +8,7 @@ import { Loader2, CheckCircle, XCircle, Copy, ChevronDown, ChevronUp } from "luc
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import React from "react";
+import Head from "next/head";
 
 // Platform-agnostic StreamActions component for VLC/Browser buttons
 function getVlcUrl(streamUrl: string) {
@@ -203,171 +204,170 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black text-white font-mono">
-      {/* Header */}
-      <header className="text-center mb-12">
-        <h1 className="text-5xl md:text-6xl font-extrabold tracking-widest text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
-          STREAMFLIX
-        </h1>
-        <p className="mt-3 text-lg md:text-xl text-gray-400">STREAM TORRENTS INSTANTLY - NO DOWNLOADS NEEDED</p>
-      </header>
+    <>
+      <Head>
+        <title>StreamFlix</title>
+      </Head>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black text-white font-mono">
+        {/* Header */}
+        <header className="text-center mb-12">
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-widest text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+            STREAMFLIX
+          </h1>
+          <p className="mt-3 text-lg md:text-xl text-gray-400">
+            Convert Magnet Links to Instant Streams
+          </p>
+        </header>
 
-      <main className="w-full max-w-3xl space-y-8">
-        {/* Main Form Section */}
-        <section className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8">
-          <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">INITIATE STREAM PROTOCOL</h2>
-          <div className="flex flex-col md:flex-row gap-4">
-            <Input
-              type="text"
-              placeholder="PASTE YOUR MAGNET LINK HERE..."
-              value={magnetLink}
-              onChange={(e) => setMagnetLink(e.target.value)}
-              className="flex-1 bg-gray-900 border border-gray-700 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-white focus:border-white transition-all duration-300 font-mono"
-              disabled={isLoading}
-              aria-label="Magnet link input"
-            />
-            <Button
-              onClick={handleStartStreaming}
-              className="bg-white text-black font-semibold py-3 px-6 rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 border border-white"
-              disabled={isLoading}
-            >
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />}
-              {isLoading ? "PROCESSING..." : "START STREAMING"}
-            </Button>
-          </div>
-          <p className="mt-4 text-sm text-gray-500 text-center">OBTAIN MAGNET LINKS FROM STREMIO + TORRENTIO ADDON</p>
-        </section>
-
-        {/* Status / Progress Section */}
-        {(isLoading || isError || streamingUrl) && (
+        <main className="w-full max-w-3xl space-y-8">
+          {/* Main Form Section */}
           <section className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8">
-            <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">STREAM STATUS LOG</h2>
-
-            {isError ? (
-              <div className="text-center text-gray-400 space-y-4">
-                <XCircle className="h-12 w-12 mx-auto text-gray-400 drop-shadow-[0_0_5px_rgba(255,0,0,0.5)]" />
-                <p className="text-lg font-medium">ERROR: STREAM INITIATION FAILED.</p>
-                <Button
-                  onClick={handleRetry}
-                  className="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-5 rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.1)] transition-all duration-300 border border-gray-600"
-                >
-                  RETRY
-                </Button>
-              </div>
-            ) : (
-              <ul className="space-y-4">
-                {progressSteps.map((step, idx) => (
-                  <li
-                    key={idx}
-                    className={cn(
-                      "flex items-center gap-3 text-lg transition-colors duration-500",
-                      streamProgress > idx ? "text-gray-300" : "text-gray-600",
-                      streamProgress === idx + 1 && isLoading
-                        ? "text-white font-medium drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]"
-                        : "",
-                    )}
-                  >
-                    {streamProgress > idx ? (
-                      <CheckCircle className="h-6 w-6 text-gray-300 drop-shadow-[0_0_5px_rgba(0,255,0,0.5)]" />
-                    ) : streamProgress === idx + 1 && isLoading ? (
-                      <Loader2 className="h-6 w-6 animate-spin text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]" />
-                    ) : (
-                      <span className="h-6 w-6 flex items-center justify-center text-gray-700">{idx + 1}.</span>
-                    )}
-                    {step.toUpperCase()}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        )}
-
-        {/* Results Section */}
-        {streamingUrl && (
-          <section className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8">
-            <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">GENERATED STREAM URL</h2>
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">INITIATE STREAM PROTOCOL</h2>
+            <div className="flex flex-col md:flex-row gap-4">
               <Input
                 type="text"
-                value={streamingUrl}
-                readOnly
-                className="flex-1 bg-gray-900 border border-gray-700 text-white focus:ring-0 focus:border-gray-700 cursor-text font-mono"
-                aria-label="Generated streaming URL"
+                placeholder="PASTE YOUR MAGNET LINK HERE..."
+                value={magnetLink}
+                onChange={(e) => setMagnetLink(e.target.value)}
+                className="flex-1 bg-gray-900 border border-gray-700 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-white focus:border-white transition-all duration-300 font-mono"
+                disabled={isLoading}
+                aria-label="Magnet link input"
               />
+              <Button
+                onClick={handleStartStreaming}
+                className="bg-white text-black font-semibold py-3 px-6 rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 border border-white"
+                disabled={isLoading}
+              >
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />}
+                {isLoading ? "PROCESSING..." : "START STREAMING"}
+              </Button>
             </div>
-            {/* Centered VLC button for mobile, copy button for desktop */}
-            <StreamActions streamUrl={streamingUrl} onCopy={handleCopyUrl} isCopied={isCopied} />
-            <div className="flex flex-col items-center justify-center gap-4 mt-6">
-              <div className="w-full text-center">
-                <p className="text-gray-400 mb-2 font-semibold">How to use:</p>
-                <ol className="list-decimal list-inside text-gray-400 text-left max-w-xl mx-auto space-y-1">
-                  <li>Copy the above link.</li>
-                  <li>Paste it directly into your video player (VLC, Outplayer, etc.).</li>
-                </ol>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Instructions Panel */}
-        <Collapsible
-          open={isInstructionsOpen}
-          onOpenChange={setIsInstructionsOpen}
-          className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8"
-        >
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              className="w-full flex justify-between items-center text-lg font-semibold text-gray-200 hover:bg-white/10 transition-colors duration-300"
-              aria-expanded={isInstructionsOpen}
-              aria-controls="instructions-content"
-            >
-              OPERATION MANUAL
-              {isInstructionsOpen ? (
-                <ChevronUp className="h-5 w-5 text-gray-300" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-gray-300" />
-              )}
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent id="instructions-content" className="mt-4 space-y-4 text-gray-500">
-            <p>FOLLOW THESE STEPS TO INITIATE STREAM:</p>
-            <ol className="list-decimal list-inside space-y-2">
-              <li>
-                <strong>OBTAIN MAGNET LINK:</strong> ACQUIRE A MAGNET LINK FROM YOUR PREFERRED TORRENT SOURCE, E.G.,
-                STREMIO WITH TORRENTIO ADDON.
-              </li>
-              <li>
-                <strong>INPUT & STREAM:</strong> PASTE THE MAGNET LINK INTO THE INPUT FIELD ABOVE AND ACTIVATE "START
-                STREAMING".
-              </li>
-              <li>
-                <strong>RETRIEVE URL:</strong> UPON STREAM READINESS, COPY THE GENERATED STREAMING URL.
-              </li>
-              <li>
-                <strong>PLAYER INTEGRATION:</strong> PASTE THE URL INTO YOUR PREFERRED VIDEO PLAYER.
-              </li>
-            </ol>
-            <p>
-              <strong>RECOMMENDED APPLICATIONS:</strong> OUTPLAYER (IOS), VLC (ALL PLATFORMS), MX PLAYER (ANDROID).
+            <p className="mt-4 text-sm text-gray-500 text-center">
+              Obtain magnet links from any torrent source.
             </p>
-          </CollapsibleContent>
-        </Collapsible>
-      </main>
+          </section>
 
-      {/* Footer */}
-      <footer className="mt-12 text-center text-gray-700 text-sm">
-        <p>&copy; {new Date().getFullYear()} STREAMFLIX. ALL RIGHTS RESERVED.</p>
-        <p className="mt-1">
-          <a href="#" className="hover:text-gray-400 transition-colors duration-300">
-            HOW IT WORKS
-          </a>{" "}
-          |{" "}
-          <a href="#" className="hover:text-gray-400 transition-colors duration-300">
-            FAQ
-          </a>
-        </p>
-      </footer>
-    </div>
+          {/* Status / Progress Section */}
+          {(isLoading || isError || streamingUrl) && (
+            <section className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8">
+              <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">STREAM STATUS LOG</h2>
+
+              {isError ? (
+                <div className="text-center text-gray-400 space-y-4">
+                  <XCircle className="h-12 w-12 mx-auto text-gray-400 drop-shadow-[0_0_5px_rgba(255,0,0,0.5)]" />
+                  <p className="text-lg font-medium">ERROR: STREAM INITIATION FAILED.</p>
+                  <Button
+                    onClick={handleRetry}
+                    className="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-5 rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.1)] transition-all duration-300 border border-gray-600"
+                  >
+                    RETRY
+                  </Button>
+                </div>
+              ) : (
+                <ul className="space-y-4">
+                  {progressSteps.map((step, idx) => (
+                    <li
+                      key={idx}
+                      className={cn(
+                        "flex items-center gap-3 text-lg transition-colors duration-500",
+                        streamProgress > idx ? "text-gray-300" : "text-gray-600",
+                        streamProgress === idx + 1 && isLoading
+                          ? "text-white font-medium drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]"
+                          : "",
+                      )}
+                    >
+                      {streamProgress > idx ? (
+                        <CheckCircle className="h-6 w-6 text-gray-300 drop-shadow-[0_0_5px_rgba(0,255,0,0.5)]" />
+                      ) : streamProgress === idx + 1 && isLoading ? (
+                        <Loader2 className="h-6 w-6 animate-spin text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]" />
+                      ) : (
+                        <span className="h-6 w-6 flex items-center justify-center text-gray-700">{idx + 1}.</span>
+                      )}
+                      {step.toUpperCase()}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
+          {/* Results Section */}
+          {streamingUrl && (
+            <section className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8">
+              <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">GENERATED STREAM URL</h2>
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <Input
+                  type="text"
+                  value={streamingUrl}
+                  readOnly
+                  className="flex-1 bg-gray-900 border border-gray-700 text-white focus:ring-0 focus:border-gray-700 cursor-text font-mono"
+                  aria-label="Generated streaming URL"
+                />
+              </div>
+              {/* Centered VLC button for mobile, copy button for desktop */}
+              <StreamActions streamUrl={streamingUrl} onCopy={handleCopyUrl} isCopied={isCopied} />
+              <div className="flex flex-col items-center justify-center gap-4 mt-6">
+                <div className="w-full text-center">
+                  <p className="text-gray-400 mb-2 font-semibold">How to use:</p>
+                  <ol className="list-decimal list-inside text-gray-400 text-left max-w-xl mx-auto space-y-1">
+                    <li>Copy the above link.</li>
+                    <li>Paste it directly into your video player (VLC, Outplayer, etc.).</li>
+                  </ol>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Instructions Panel */}
+          <Collapsible
+            open={isInstructionsOpen}
+            onOpenChange={setIsInstructionsOpen}
+            className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8"
+          >
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                className="w-full flex justify-between items-center text-lg font-semibold text-gray-200 hover:bg-white/10 transition-colors duration-300"
+                aria-expanded={isInstructionsOpen}
+                aria-controls="instructions-content"
+              >
+                OPERATION MANUAL
+                {isInstructionsOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-300" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-gray-300" />
+                )}
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent id="instructions-content" className="mt-4 space-y-4 text-gray-500">
+              <p>FOLLOW THESE STEPS TO INITIATE STREAM:</p>
+              <ol className="list-decimal list-inside space-y-2">
+                <li>
+                  <strong>OBTAIN MAGNET LINK:</strong> ACQUIRE A MAGNET LINK FROM YOUR PREFERRED TORRENT SOURCE.
+                </li>
+                <li>
+                  <strong>INPUT & STREAM:</strong> PASTE THE MAGNET LINK INTO THE INPUT FIELD ABOVE AND ACTIVATE "START
+                  STREAMING".
+                </li>
+                <li>
+                  <strong>RETRIEVE URL:</strong> UPON STREAM READINESS, COPY THE GENERATED STREAMING URL.
+                </li>
+                <li>
+                  <strong>PLAYER INTEGRATION:</strong> PASTE THE URL INTO YOUR PREFERRED VIDEO PLAYER.
+                </li>
+              </ol>
+              <p>
+                <strong>RECOMMENDED APPLICATIONS:</strong> OUTPLAYER (IOS), VLC (ALL PLATFORMS), MX PLAYER (ANDROID).
+              </p>
+            </CollapsibleContent>
+          </Collapsible>
+        </main>
+
+        {/* Footer */}
+        <footer className="mt-12 text-center text-gray-700 text-sm">
+          <p>&copy; {new Date().getFullYear()} STREAMFLIX. ALL RIGHTS RESERVED.</p>
+        </footer>
+      </div>
+    </>
   )
 }
