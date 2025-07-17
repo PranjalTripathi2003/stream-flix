@@ -8,7 +8,7 @@ import { Loader2, CheckCircle, XCircle, ChevronDown, ChevronUp } from "lucide-re
 import { TbBrandVlc, TbCopy } from "react-icons/tb"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import Head from "next/head";
 
 // Platform-agnostic StreamActions component for VLC/Browser buttons
@@ -46,21 +46,50 @@ function StreamActions({ streamUrl, onCopy, isCopied }: { streamUrl: string, onC
     }
   }, [streamUrl]);
 
+  const isMobile = typeof window !== "undefined" && (
+    /iPad|iPhone|iPod/.test(window.navigator.userAgent) ||
+    /Android/.test(window.navigator.userAgent)
+  );
+
+  if (isMobile) {
+    return (
+      <div className="grid grid-cols-2 gap-4 mt-6">
+        <a
+          href={vlcUrl}
+          className="w-full max-w-xs flex justify-center items-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 min-h-[56px] rounded-lg shadow-[0_0_15px_rgba(255,136,0,0.5)] hover:shadow-[0_0_20px_rgba(255,136,0,0.7)] transition-all duration-300 transform hover:scale-105 border border-orange-400 gap-2 text-base"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <TbBrandVlc className="h-7 w-7" />
+          VLC
+        </a>
+        <Button
+          onClick={onCopy}
+          className={cn(
+            "w-full max-w-xs flex justify-center items-center bg-white text-black font-semibold py-3 min-h-[56px] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 border border-white gap-2 text-base",
+            isCopied && "bg-gray-700 text-white hover:bg-gray-600 shadow-[0_0_10px_rgba(0,255,0,0.5)]",
+          )}
+        >
+          {isCopied ? (
+            <>
+              <CheckCircle className="h-5 w-5" /> COPIED!
+            </>
+          ) : (
+            <>
+              <TbCopy className="h-7 w-7" /> COPY URL
+            </>
+          )}
+        </Button>
+      </div>
+    );
+  }
+  // Desktop: center the copy button
   return (
-    <div className="grid grid-cols-2 gap-4 mt-6">
-      <a
-        href={vlcUrl}
-        className="w-full flex justify-center items-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 min-h-[56px] rounded-lg shadow-[0_0_15px_rgba(255,136,0,0.5)] hover:shadow-[0_0_20px_rgba(255,136,0,0.7)] transition-all duration-300 transform hover:scale-105 border border-orange-400 gap-2 text-base"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <TbBrandVlc className="h-7 w-7" />
-        VLC
-      </a>
+    <div className="flex justify-center mt-6">
       <Button
         onClick={onCopy}
         className={cn(
-          "w-full flex justify-center items-center bg-white text-black font-semibold py-3 min-h-[56px] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 border border-white gap-2 text-base",
+          "w-full max-w-xs flex justify-center items-center bg-white text-black font-semibold py-3 min-h-[56px] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 border border-white gap-2 text-base",
           isCopied && "bg-gray-700 text-white hover:bg-gray-600 shadow-[0_0_10px_rgba(0,255,0,0.5)]",
         )}
       >
@@ -194,6 +223,14 @@ export default function Page() {
     setMagnetLink("")
   }
 
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (streamingUrl && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [streamingUrl]);
+
   return (
     <>
       <Head>
@@ -214,19 +251,19 @@ export default function Page() {
           {/* Main Form Section */}
           <section className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8">
             <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">INITIATE STREAM PROTOCOL</h2>
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col gap-4 items-center">
               <Input
                 type="text"
                 placeholder="PASTE YOUR MAGNET LINK HERE..."
                 value={magnetLink}
                 onChange={(e) => setMagnetLink(e.target.value)}
-                className="flex-1 bg-gray-900 border border-gray-700 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-white focus:border-white transition-all duration-300 font-mono"
+                className="w-full max-w-xl bg-gray-900 border border-gray-700 text-white placeholder:text-gray-500 focus:ring-1 focus:ring-white focus:border-white transition-all duration-300 font-mono"
                 disabled={isLoading}
                 aria-label="Magnet link input"
               />
               <Button
                 onClick={handleStartStreaming}
-                className="bg-white text-black font-semibold py-3 px-6 rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 border border-white"
+                className="w-full max-w-xs flex justify-center items-center bg-white text-black font-semibold py-3 min-h-[56px] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 border border-white gap-2 text-base"
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />}
@@ -240,7 +277,7 @@ export default function Page() {
 
           {/* Results Section */}
           {streamingUrl && (
-            <section className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8">
+            <section ref={resultsRef} className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8">
               <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">GENERATED STREAM URL</h2>
               <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <Input
@@ -253,15 +290,6 @@ export default function Page() {
               </div>
               {/* Centered VLC button for mobile, copy button for desktop */}
               <StreamActions streamUrl={streamingUrl} onCopy={handleCopyUrl} isCopied={isCopied} />
-              <div className="flex flex-col items-center justify-center gap-4 mt-6">
-                <div className="w-full text-center">
-                  <p className="text-gray-400 mb-2 font-semibold">How to use:</p>
-                  <ol className="list-decimal list-inside text-gray-400 text-left max-w-xl mx-auto space-y-1">
-                    <li>Copy the above link.</li>
-                    <li>Paste it directly into your video player (VLC, Outplayer, etc.).</li>
-                  </ol>
-                </div>
-              </div>
             </section>
           )}
 
@@ -303,6 +331,12 @@ export default function Page() {
                   <strong>PLAYER INTEGRATION:</strong> PASTE THE URL INTO YOUR PREFERRED VIDEO PLAYER.
                 </li>
               </ol>
+              <div className="mt-4 p-4 bg-gray-800/50 rounded-lg border border-gray-600">
+                <p className="font-semibold text-gray-300 mb-2">MOBILE DEVICE USERS:</p>
+                <ul className="list-disc list-inside space-y-1 text-sm">
+                  <li><strong>ANDROID & IOS:</strong> IF YOU HAVE VLC INSTALLED, CLICK THE "VLC" BUTTON TO OPEN THE STREAM DIRECTLY IN VLC.</li>
+                </ul>
+              </div>
               <p>
                 <strong>RECOMMENDED APPLICATIONS:</strong> OUTPLAYER (IOS), VLC (ALL PLATFORMS), MX PLAYER (ANDROID).
               </p>
