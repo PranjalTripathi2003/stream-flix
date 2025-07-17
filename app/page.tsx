@@ -4,7 +4,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, CheckCircle, XCircle, Copy, ChevronDown, ChevronUp } from "lucide-react"
+import { Loader2, CheckCircle, XCircle, ChevronDown, ChevronUp } from "lucide-react"
+import { TbBrandVlc, TbCopy } from "react-icons/tb"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import React from "react";
@@ -28,7 +29,6 @@ function getVlcUrl(streamUrl: string) {
 }
 
 function StreamActions({ streamUrl, onCopy, isCopied }: { streamUrl: string, onCopy: () => void, isCopied: boolean }) {
-  const [isMobile, setIsMobile] = React.useState(false);
   const [vlcUrl, setVlcUrl] = React.useState(streamUrl);
 
   React.useEffect(() => {
@@ -36,7 +36,6 @@ function StreamActions({ streamUrl, onCopy, isCopied }: { streamUrl: string, onC
       const ua = window.navigator.userAgent;
       const isIOS = /iPad|iPhone|iPod/.test(ua);
       const isAndroid = /Android/.test(ua);
-      setIsMobile(isIOS || isAndroid);
       if (isIOS) {
         setVlcUrl(`vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(streamUrl)}`);
       } else if (isAndroid) {
@@ -48,38 +47,30 @@ function StreamActions({ streamUrl, onCopy, isCopied }: { streamUrl: string, onC
   }, [streamUrl]);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? "1.5rem" : "0", marginTop: "1.5rem" }}>
-      {isMobile && (
-        <a
-          href={vlcUrl}
-          style={{
-            padding: "0.5rem 1rem",
-            background: "#ff8800",
-            color: "#fff",
-            borderRadius: "4px",
-            textDecoration: "none",
-            fontWeight: "bold",
-          }}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Open in VLC
-        </a>
-      )}
+    <div className="grid grid-cols-2 gap-4 mt-6">
+      <a
+        href={vlcUrl}
+        className="w-full flex justify-center items-center bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 min-h-[56px] rounded-lg shadow-[0_0_15px_rgba(255,136,0,0.5)] hover:shadow-[0_0_20px_rgba(255,136,0,0.7)] transition-all duration-300 transform hover:scale-105 border border-orange-400 gap-2 text-base"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <TbBrandVlc className="h-7 w-7" />
+        VLC
+      </a>
       <Button
         onClick={onCopy}
         className={cn(
-          "bg-white text-black font-semibold py-3 px-6 rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 border border-white",
+          "w-full flex justify-center items-center bg-white text-black font-semibold py-3 min-h-[56px] rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.5)] hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 border border-white gap-2 text-base",
           isCopied && "bg-gray-700 text-white hover:bg-gray-600 shadow-[0_0_10px_rgba(0,255,0,0.5)]",
         )}
       >
         {isCopied ? (
           <>
-            <CheckCircle className="mr-2 h-4 w-4 text-white" /> COPIED!
+            <CheckCircle className="h-5 w-5" /> COPIED!
           </>
         ) : (
           <>
-            <Copy className="mr-2 h-4 w-4 text-black" /> COPY URL
+            <TbCopy className="h-7 w-7" /> COPY URL
           </>
         )}
       </Button>
@@ -208,13 +199,13 @@ export default function Page() {
       <Head>
         <title>StreamFlix</title>
       </Head>
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black text-white font-mono">
+      <div className="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4 bg-black text-white">
         {/* Header */}
-        <header className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-widest text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+        <header className="text-center mb-12 px-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-wider sm:tracking-widest text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] break-words">
             STREAMFLIX
           </h1>
-          <p className="mt-3 text-lg md:text-xl text-gray-400">
+          <p className="mt-3 text-base sm:text-lg md:text-xl text-gray-400">
             Convert Magnet Links to Instant Streams
           </p>
         </header>
@@ -246,50 +237,6 @@ export default function Page() {
               Obtain magnet links from any torrent source.
             </p>
           </section>
-
-          {/* Status / Progress Section */}
-          {(isLoading || isError || streamingUrl) && (
-            <section className="bg-white/5 backdrop-blur-lg border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(255,255,255,0.1)] p-6 md:p-8">
-              <h2 className="text-2xl font-bold mb-6 text-center text-gray-200">STREAM STATUS LOG</h2>
-
-              {isError ? (
-                <div className="text-center text-gray-400 space-y-4">
-                  <XCircle className="h-12 w-12 mx-auto text-gray-400 drop-shadow-[0_0_5px_rgba(255,0,0,0.5)]" />
-                  <p className="text-lg font-medium">ERROR: STREAM INITIATION FAILED.</p>
-                  <Button
-                    onClick={handleRetry}
-                    className="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-5 rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.1)] transition-all duration-300 border border-gray-600"
-                  >
-                    RETRY
-                  </Button>
-                </div>
-              ) : (
-                <ul className="space-y-4">
-                  {progressSteps.map((step, idx) => (
-                    <li
-                      key={idx}
-                      className={cn(
-                        "flex items-center gap-3 text-lg transition-colors duration-500",
-                        streamProgress > idx ? "text-gray-300" : "text-gray-600",
-                        streamProgress === idx + 1 && isLoading
-                          ? "text-white font-medium drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]"
-                          : "",
-                      )}
-                    >
-                      {streamProgress > idx ? (
-                        <CheckCircle className="h-6 w-6 text-gray-300 drop-shadow-[0_0_5px_rgba(0,255,0,0.5)]" />
-                      ) : streamProgress === idx + 1 && isLoading ? (
-                        <Loader2 className="h-6 w-6 animate-spin text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]" />
-                      ) : (
-                        <span className="h-6 w-6 flex items-center justify-center text-gray-700">{idx + 1}.</span>
-                      )}
-                      {step.toUpperCase()}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          )}
 
           {/* Results Section */}
           {streamingUrl && (
